@@ -50,6 +50,25 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
     return res.status(400).json({ error: 'unknown command' });
   }
 
+  if (type === InteractionType.MESSAGE_COMPONENT) {
+    const { name } = data;
+
+    // "test" command
+    if (name === 'test') {
+      // Send a message into the channel where command was triggered from
+      return res.send({
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+          // Fetches a random emoji to send from a helper function
+          content: `hello world ${getRandomEmoji()}`,
+        },
+      });
+    }
+
+    console.error(`unknown command: ${name}`);
+    return res.status(400).json({ error: 'unknown command' });
+  }
+
   console.error('unknown interaction type', type);
   return res.status(400).json({ error: 'unknown interaction type' });
 });
